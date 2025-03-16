@@ -89,7 +89,11 @@ class Backtester:
             exit_price = self.utils.get_price(self.spx_index_data, self.index, 'Close')
             timestamp = self.utils.get_timestamp(self.spx_index_data, self.index)
             pnl = self.utils.get_pnl(exit_price, entry_price, self.commission)
-            self.cash += entry_price + pnl
+
+            if action == "BUY":
+                self.cash = self.cash + exit_price + pnl
+            else:
+                self.cash += pnl
 
             print(f"{timestamp}  Closed {action} at {exit_price:.2f}, PnL: {pnl:.2f}")
             print(f"Current cash balance: {self.cash:.2f}")
