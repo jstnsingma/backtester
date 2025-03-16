@@ -62,9 +62,11 @@ class TradeAnalyzer:
         # Print results
         for date, group in grouped.items():
             date = date.strftime("%d-%m-%Y")
+            pnl = float(group["pnl"].sum())
+            total_trades = len(group)
             day_summary[date] = {}
-            day_summary[date]['total_pnl'] = float(group["pnl"].sum())
-            day_summary[date]['total_trades'] = len(group)
+            day_summary[date]['total_pnl'] = pnl - total_trades
+            day_summary[date]['total_trades'] = total_trades
 
         return pd.DataFrame(day_summary)
     

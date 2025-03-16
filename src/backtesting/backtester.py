@@ -2,6 +2,8 @@ from .strategies import Strategy
 from .strategies import ExampleStrategy
 from analyzer import TradeAnalyzer
 from utils import Utils
+from src.definitions import SPX_INDEX_DATA, SPX_FUTURE_DATA
+import pandas as pd
 
 class Backtester:
     """Simple backtester that goes over the data in incremental time
@@ -65,18 +67,23 @@ class Backtester:
         price = self.utils.get_price(self.spx_index_data, self.index, 'Close')
         timestamp = self.utils.get_timestamp(self.spx_index_data, self.index)
 
-        if action == "BUY":
-            cost = price + self.commission
+        if self.cash > price: 
+            if action == "BUY":
+                self.cash = self.cash - (price + self.commission)
+                print(f"{timestamp} Trade Executed: {action} at {price} Commission: 2")
+            elif action == "SELL":
+                cost = self.utils.get_notional(price)
+                self.cash = self.cash - (cost + self.commission)
+                print(f"{timestamp} Trade Executed: {action} at {cost} Commission: 2")
+
+            self.trade_position.append((action, price, self.index + 10))
+            
+            print(f"Current cash balance: {self.cash}")
+
         else:
-            short_position = 0.5 * self.cash
-            cost = 0.05 * short_position
+            print("not enough cash")
 
-        self.trade_position.append((action, price, self.index + 10))
-        self.cash -= cost
-
-        print(f"{timestamp} Trade Executed: {action} at {price:.2f}")
-        print(f"Current cash balance: {self.cash:.2f}")
-
+            
     def close_position(self) -> None:
         """Mock placing a CLOSING order that trades to close an existing
         position.
@@ -88,16 +95,16 @@ class Backtester:
             
             exit_price = self.utils.get_price(self.spx_index_data, self.index, 'Close')
             timestamp = self.utils.get_timestamp(self.spx_index_data, self.index)
-            pnl = self.utils.get_pnl(exit_price, entry_price, self.commission)
+            pnl = self.utils.get_pnl(exit_price, entry_price)
 
             if action == "BUY":
-                self.cash = self.cash + exit_price + pnl
+                self.cash = self.cash + entry_price + pnl - self.commission
+                print(f"{timestamp}  Closed {action} at {exit_price}, PnL: {pnl} Commission: 2")
             else:
-                self.cash += pnl
+                self.cash, notional = self.utils.cover_short(entry_price, pnl, self.cash)
+                print(f"{timestamp}  Closed {action} at {notional}, PnL: {pnl}, Commission: 2")
 
-            print(f"{timestamp}  Closed {action} at {exit_price:.2f}, PnL: {pnl:.2f}")
-            print(f"Current cash balance: {self.cash:.2f}")
-
+            print(f"Current cash balance: {self.cash}")
             trade_data = self.utils.get_trade_data(timestamp, entry_price, exit_price, pnl)
             self.executed_trades.append(trade_data)
             
@@ -128,4 +135,3 @@ class Backtester:
         print(f"Data of winning trades: {self.trade_performance['winners']}")
         print(f"Data of Losing trades: {self.trade_performance['losers']}")
         print(f"Final Balance: {self.cash:.2f}")
-    
