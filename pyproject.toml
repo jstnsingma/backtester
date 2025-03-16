@@ -1,23 +1,21 @@
-[tool.poetry]
-name = "python-dev-case-1"
+[project]
+name = "python-dev-case-1-main"
 version = "1.0.0"
-description = "\"Template repo for the Python case as part of the Python Software Engineer interview process\""
-authors = ["Gijs Paardekooper <gijs.paardekooper@crossoptions.nl>"]
+description = "A backtester tool"
+authors = [
+    {name = "Justin",email = "jstnsingma@gmail.com"}
+]
 readme = "README.md"
-packages = [{include = "src"}]
+requires-python = ">=3.10"
+dependencies = [
+    "yfinance (>=0.2.54,<0.3.0)",
+    "pandas (>=2.2.3,<3.0.0)",
+    "numpy (>=2.2.3,<3.0.0)",
+    "matplotlib (>=3.10.1,<4.0.0)",
+    "seaborn (>=0.13.2,<0.14.0)",
+]
 
-[tool.poetry.dependencies]
-python = ">=3.10,<3.11"
-yfinance = "^0.2.50"
-matplotlib = "^3.9.3"
-seaborn = "^0.13.2"
-
-
-[tool.poetry.group.dev.dependencies]
-black = "^24.10.0"
-isort = "^5.13.2"
-flake8 = "^7.1.1"
 
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
