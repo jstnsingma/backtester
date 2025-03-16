@@ -15,5 +15,6 @@ poetry install --sync
 
 ### 2. Run the program
 ```shell
+cd to directory path
 python main.py
 ```
