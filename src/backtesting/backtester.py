@@ -2,8 +2,6 @@ from .strategies import Strategy
 from .strategies import ExampleStrategy
 from analyzer import TradeAnalyzer
 from utils import Utils
-from src.definitions import SPX_INDEX_DATA, SPX_FUTURE_DATA
-import pandas as pd
 
 class Backtester:
     """Simple backtester that goes over the data in incremental time
